@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "PrivacyPlugin"
 include(":app")
+include(":libplugin")
