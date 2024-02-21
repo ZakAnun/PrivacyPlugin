@@ -1,4 +1,8 @@
+
+rootProject.name = "PrivacyPlugin"
+
 pluginManagement {
+    includeBuild("privacy_plugin")
     repositories {
         google()
         mavenCentral()
@@ -13,6 +17,8 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PrivacyPlugin"
 include(":app")
-include(":libplugin")
+
+plugins {
+    id("com.zakzone.privacy_plugin")
+}
