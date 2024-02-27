@@ -18,6 +18,8 @@ abstract class AllProjectsApkTask: DefaultTask() {
         val output = outputFile.get().asFile
         java.nio.file.Files.deleteIfExists(output.toPath())
 
+        println("output.toPath == ${output.toPath()}")
+
         // inputDirectories contains a list of directories.
         //
         // Each directory contains the APKs for a particular module. We only
@@ -35,7 +37,10 @@ abstract class AllProjectsApkTask: DefaultTask() {
                 // in my result file.
                 it.asFile.walkTopDown()
                     .filter { it.name.endsWith(".apk") }
-                    .forEach { output.appendText("${it.absolutePath}\n") }
+                    .forEach {
+                        output.appendText("${it.absolutePath}\n")
+                        output.appendText("append a output path, value == ${output.toPath()}")
+                    }
             }
     }
 }
