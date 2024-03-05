@@ -18,7 +18,3 @@ dependencyResolutionManagement {
 }
 
 include(":app")
-
-plugins {
-    id("com.zakzone.privacy_plugin")
-}

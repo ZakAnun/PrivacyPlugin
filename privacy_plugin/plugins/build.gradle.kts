@@ -1,5 +1,5 @@
 plugins {
-    id("java-gradle-plugin")
+    `java-gradle-plugin`
     alias(libs.plugins.kotlin.jvm)
 }
 
@@ -10,7 +10,7 @@ java {
 }
 
 dependencies {
-    implementation(libs.android.gradlePlugin.api)
+    compileOnly(libs.android.gradlePlugin.api)
     implementation(gradleKotlinDsl())
 }
 
@@ -18,7 +18,7 @@ gradlePlugin {
     plugins {
         create("privacyApiSettings") {
             id = "com.zakzone.privacy_plugin"
-            implementationClass = "TempTest"
+            implementationClass = "ModifyClassesPlugin"
         }
     }
 }
