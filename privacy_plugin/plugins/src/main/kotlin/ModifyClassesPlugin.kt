@@ -1,5 +1,5 @@
 import com.android.build.api.artifact.ScopedArtifact
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.api.variant.ScopedArtifacts
 import com.android.build.gradle.AppPlugin
 import org.gradle.api.Plugin
@@ -13,16 +13,15 @@ class ModifyClassesPlugin : Plugin<Project> {
         // the Android Application plugin.
         project.plugins.withType(AppPlugin::class.java) {
 
-            // Queries for the extension set by the Android Application plugin.
+            // Queries for the extension set by the Android Application plugin or Library plugin.
             // This is the second of two entry points into the Android Gradle plugin
-            val androidComponents =
-                project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
+            val androidComponents = project.extensions.getByType(AndroidComponentsExtension::class.java)
             // Registers a callback to be called, when a new variant is configured
             androidComponents.onVariants { variant ->
                 val taskProvider = project.tasks.register<ModifyClassesTask>("${variant.name}ModifyClasses")
 
                 // Register modify classes task
-                variant.artifacts.forScope(ScopedArtifacts.Scope.PROJECT)
+                variant.artifacts.forScope(ScopedArtifacts.Scope.ALL)
                     .use(taskProvider)
                     .toTransform(
                         ScopedArtifact.CLASSES,
