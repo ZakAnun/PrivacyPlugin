@@ -1,15 +1,15 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("com.zakzone.privacy_plugin")
+    id("com.zakanun.privacy_plugin")
 }
 
 android {
-    namespace = "com.zakzone.privacyplugin"
+    namespace = "com.zakanun.privacyplugin"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.zakzone.privacyplugin"
+        applicationId = "com.zakanun.privacyplugin"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

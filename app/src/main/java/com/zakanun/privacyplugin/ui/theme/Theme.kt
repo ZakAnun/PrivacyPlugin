@@ -1,4 +1,4 @@
-package com.zakzone.privacyplugin.ui.theme
+package com.zakanun.privacyplugin.ui.theme
 
 import android.app.Activity
 import android.os.Build

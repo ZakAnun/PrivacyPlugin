@@ -1,4 +1,4 @@
-package com.zakzone.privacyplugin
+package com.zakanun.privacyplugin
 
 import org.junit.Test
 

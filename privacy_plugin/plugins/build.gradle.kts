@@ -17,7 +17,7 @@ dependencies {
 gradlePlugin {
     plugins {
         create("privacyApiSettings") {
-            id = "com.zakzone.privacy_plugin"
+            id = "com.zakanun.privacy_plugin"
             implementationClass = "ModifyClassesPlugin"
         }
     }
