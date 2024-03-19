@@ -33,19 +33,21 @@ abstract class ModifyClassesTask: DefaultTask() {
     val jarPaths = mutableSetOf<String>()
 
     @TaskAction
-    fun taskAction() {
-//        val pool = ClassPool(ClassPool.getDefault())
+    fun doModify() {
+//        val pool = ClassPool(ClassPool.getDefault()) (may change to asm.)
 
         val jarOutput = JarOutputStream(BufferedOutputStream(FileOutputStream(output.get().asFile)))
         // we just copying classes from jar files without modification
         allJars.get().forEach { file ->
-            println("handling " + file.asFile.absolutePath)
-            val jarFile = JarFile(file.asFile)
-            jarFile.entries().iterator().forEach { jarEntry ->
-                println("Adding from jar ${jarEntry.name}")
-                jarOutput.writeEntity(jarEntry.name, jarFile.getInputStream(jarEntry))
+            if (isCodeSource(file.asFile.absolutePath)) {
+                println("handling " + file.asFile.absolutePath)
+                val jarFile = JarFile(file.asFile)
+                jarFile.entries().iterator().forEach { jarEntry ->
+                    println("Adding from jar ${jarEntry.name}")
+                    jarOutput.writeEntity(jarEntry.name, jarFile.getInputStream(jarEntry))
+                }
+                jarFile.close()
             }
-            jarFile.close()
         }
         // Iterating through class files from directories
         // Looking for SomeSource.class to add generated interface and instrument with additional output in
@@ -54,8 +56,8 @@ abstract class ModifyClassesTask: DefaultTask() {
             println("handling " + directory.asFile.absolutePath)
             directory.asFile.walk().forEach { file ->
                 if (file.isFile) {
-                    if (file.name.endsWith("SomeSource.class")) {
-                        println("Found $file.name")
+                    if (file.name.endsWith("MainActivity.class")) {
+                        println("Found ${file.name}")
 //                        val interfaceClass = pool.makeInterface("com.example.android.recipes.sample.SomeInterface");
 //                        println("Adding $interfaceClass")
 //                        jarOutput.writeEntity("com/example/android/recipes/sample/SomeInterface.class", interfaceClass.toBytecode())
@@ -71,7 +73,7 @@ abstract class ModifyClassesTask: DefaultTask() {
 //
 //                            val relativePath = directory.asFile.toURI().relativize(file.toURI()).getPath()
 //                            // Writing changed class to output jar
-////                            jarOutput.writeEntity(relativePath.replace(File.separatorChar, '/'), ctClass.toBytecode())
+//                            jarOutput.writeEntity(relativePath.replace(File.separatorChar, '/'), ctClass.toBytecode())
 //                        }
                     } else {
                         // if class is not SomeSource.class - just copy it to output without modification
@@ -112,4 +114,18 @@ abstract class ModifyClassesTask: DefaultTask() {
 
     private fun printDuplicatedMessage(name: String) =
         println("Cannot add ${name}, because output Jar already has file with the same name.")
+
+    /**
+     * 筛选 .class 源码
+     *
+     * @param codeSource class 文件路径
+     */
+    private fun isCodeSource(codeSource: String): Boolean {
+        return codeSource.endsWith(".class") &&
+                !codeSource.contains("R\$") &&
+                !codeSource.contains("R.class") &&
+                !codeSource.contains("R2\$") &&
+                !codeSource.contains("R2.class") &&
+                !codeSource.contains("BuildConfig.class")
+    }
 }
