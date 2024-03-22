@@ -1,9 +1,12 @@
 [versions]
 androidGradlePlugin = "8.2.2"
 kotlin = "1.9.0"
+asmVersion = "9.5"
 
 [libraries]
 android-gradlePlugin-api = { group = "com.android.tools.build", name = "gradle-api", version.ref = "androidGradlePlugin" }
+asm-commons-api = { group = "org.ow2.asm", name = "asm-commons", version.ref = "asmVersion"}
+asm-tree-api = { group = "org.ow2.asm", name = "asm-tree", version.ref = "asmVersion" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

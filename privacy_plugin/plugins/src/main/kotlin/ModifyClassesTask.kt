@@ -7,6 +7,11 @@ import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.MethodVisitor
+import org.objectweb.asm.Opcodes
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -58,6 +63,12 @@ abstract class ModifyClassesTask: DefaultTask() {
                 if (file.isFile) {
                     if (file.name.endsWith("MainActivity.class")) {
                         println("Found ${file.name}")
+                        val mCr = ClassReader(file.inputStream())
+                        val mCw = ClassWriter(mCr, 0)
+                        val mCv = AsmClassVisitor(Opcodes.ASM5, mCw)
+                        mCr.accept(mCv, ClassReader.EXPAND_FRAMES)
+                        val resultByteArray = mCw.toByteArray()
+                        jarOutput.writeEntity("", resultByteArray)
 //                        val interfaceClass = pool.makeInterface("com.example.android.recipes.sample.SomeInterface");
 //                        println("Adding $interfaceClass")
 //                        jarOutput.writeEntity("com/example/android/recipes/sample/SomeInterface.class", interfaceClass.toBytecode())
@@ -127,5 +138,43 @@ abstract class ModifyClassesTask: DefaultTask() {
                 !codeSource.contains("R2\$") &&
                 !codeSource.contains("R2.class") &&
                 !codeSource.contains("BuildConfig.class")
+    }
+
+    /// 类访问
+    private class AsmClassVisitor(api: Int, cv: ClassVisitor): ClassVisitor(api, cv) {
+        override fun visit(
+            version: Int,
+            access: Int,
+            name: String?,
+            signature: String?,
+            superName: String?,
+            interfaces: Array<out String>?
+        ) {
+            super.visit(version, access, name, signature, superName, interfaces)
+        }
+
+        override fun visitMethod(
+            access: Int,
+            name: String?,
+            descriptor: String?,
+            signature: String?,
+            exceptions: Array<out String>?
+        ): MethodVisitor {
+            return super.visitMethod(access, name, descriptor, signature, exceptions)
+        }
+    }
+
+    /// 方法访问
+    private class AsmMethodVisitor(api: Int, mv: MethodVisitor): MethodVisitor(api, mv) {
+        override fun visitInsn(opcode: Int) {
+            if (opcode in Opcodes.IRETURN..Opcodes.RETURN) {
+                mv.visitMethodInsn(Opcodes.INVOKESTATIC, "", "", "", false)
+            }
+            super.visitInsn(opcode)
+        }
+
+        override fun visitMaxs(maxStack: Int, maxLocals: Int) {
+            super.visitMaxs(maxStack, maxLocals)
+        }
     }
 }

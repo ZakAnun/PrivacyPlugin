@@ -10,8 +10,10 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.android.gradlePlugin.api)
     implementation(gradleKotlinDsl())
+    compileOnly(libs.android.gradlePlugin.api)
+    compileOnly(libs.asm.commons.api)
+    compileOnly(libs.asm.tree.api)
 }
 
 gradlePlugin {
